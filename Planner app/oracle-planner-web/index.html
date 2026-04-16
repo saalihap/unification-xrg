@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Planner — Exergy Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#1C1C1E;--grey-950:#1C1C1E;--grey-900:#2C2C2E;--grey-800:#3A3A3C;--grey-700:#48484A;
+  --grey-600:#8E8E93;--grey-500:#AEAEB2;--grey-400:#C7C7CC;--grey-300:#D1D1D6;--grey-200:#E5E5EA;
+  --grey-100:#F2F2F7;--grey-50:#F8F8FA;--white:#FFFFFF;
+  --accent:#5856D6;--accent-light:#7A79E0;--accent-bg:rgba(88,86,214,0.08);
+  --success:#34C759;--warning:#FF9F0A;--danger:#FF3B30;
+  --sidebar-w:220px;--radius:12px;--radius-sm:8px;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.04);--shadow-hover:0 2px 8px rgba(0,0,0,0.06);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;overflow:hidden;background:var(--grey-50);color:var(--grey-950);font-family:var(--font);font-size:14px;line-height:1.5}
+
+.login-screen{display:flex;align-items:center;justify-content:center;height:100vh;background:var(--grey-50)}
+.login-card{background:var(--white);border-radius:24px;padding:48px 40px;width:420px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.06)}
+.login-logo{width:56px;height:56px;border-radius:16px;background:var(--black);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:18px;font-weight:700;color:var(--white)}
+.login-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--grey-600);margin-bottom:24px}
+.login-machine{font-size:11px;color:var(--grey-400);font-family:var(--mono);margin-bottom:20px}
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin-bottom:16px}
+.team-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(0,0,0,0.08);background:var(--white);cursor:pointer;transition:all .12s;font-family:var(--font)}
+.team-btn:hover{border-color:var(--accent);background:var(--accent-bg);box-shadow:var(--shadow-hover)}
+.team-btn .avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--accent);flex-shrink:0}
+.team-btn .info .name{font-size:13px;font-weight:500;color:var(--grey-950)}
+.team-btn .info .role{font-size:11px;color:var(--grey-500)}
+#locked-msg{margin-top:16px}
+.btn-request{padding:8px 16px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);background:var(--white);color:var(--grey-700);font-family:var(--font);font-size:13px;cursor:pointer}
+
+.app{display:none;grid-template-columns:var(--sidebar-w) 1fr;height:100vh}
+.app.visible{display:grid}
+
+.sidebar{background:var(--black);padding:16px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sidebar-header{display:flex;align-items:center;gap:10px;padding:4px 10px 16px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:12px}
+.sidebar-logo{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.sb-name{font-size:15px;font-weight:600;color:#fff}
+.sb-org{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px}
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);padding:12px 10px 6px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;border:none;background:none;color:rgba(255,255,255,0.55);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;text-align:left;width:100%;transition:all .12s;position:relative}
+.nav-btn:hover{color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.04)}
+.nav-btn.active{color:#fff;background:rgba(255,255,255,0.08)}
+.nav-btn.active::before{content:'';position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--accent);border-radius:0 9999px 9999px 0}
+.nav-btn .icon{width:16px;opacity:0.7;font-size:14px;text-align:center}.nav-btn.active .icon{opacity:1}
+.sidebar-user{margin-top:auto;padding:10px;border-top:1px solid rgba(255,255,255,0.08)}
+.sidebar-user-info{display:flex;align-items:center;gap:10px;padding:4px 0 8px}
+.u-avatar{width:36px;height:36px;border-radius:50%;background:rgba(88,86,214,0.25);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--accent-light);flex-shrink:0}
+.u-name{font-size:13px;font-weight:500;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.u-email{font-size:11px;color:rgba(255,255,255,0.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-signout{width:100%;padding:5px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:none;color:rgba(255,255,255,0.5);font-family:var(--font);font-size:11px;cursor:pointer}.btn-signout:hover{color:var(--danger);border-color:rgba(255,59,48,0.3)}
+
+.main{overflow-y:auto;background:var(--grey-50)}
+.page{display:none;height:100%}.page.active{display:flex;flex-direction:column}
+.page-body{padding:20px 28px;overflow-y:auto;flex:1}
+.page-header{padding:14px 28px;border-bottom:1px solid rgba(0,0,0,0.06);background:var(--white);display:flex;align-items:center;justify-content:space-between}
+.page-header h2{font-size:18px;font-weight:600;letter-spacing:-0.3px}.page-header p{font-size:13px;color:var(--grey-600);margin-top:1px}
+.header-actions{display:flex;gap:8px;align-items:center}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .12s;font-family:var(--font)}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#4745B5}
+.btn-secondary{background:transparent;color:var(--grey-700);border:1px solid rgba(0,0,0,0.12)}.btn-secondary:hover{border-color:rgba(0,0,0,0.2);background:rgba(0,0,0,0.02)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+
+.card{background:var(--white);border:1px solid rgba(0,0,0,0.06);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px;transition:box-shadow .15s}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-body{padding:20px}.card-body.flush{padding:0}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--white);border:1px solid rgba(0,0,0,0.06);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:20px 24px;transition:all .15s}
+.stat-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-hover)}
+.stat-card .ic{width:44px;height:44px;border-radius:50%;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+.stat-card .val{font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:-0.5px}
+.stat-card .lbl{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;color:#64748B;margin-top:4px}
+
+.badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:500}
+.badge-success{background:rgba(52,199,89,0.1);color:#2DA44E}
+.badge-warning{background:rgba(255,159,10,0.1);color:#BF6A02}
+.badge-danger{background:rgba(255,59,48,0.1);color:#D9302A}
+.badge-info{background:rgba(88,86,214,0.1);color:var(--accent)}
+.badge-neutral{background:rgba(0,0,0,0.04);color:var(--grey-600)}
+.badge-count{display:inline-flex;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;font-family:var(--mono);align-items:center;justify-content:center}
+
+.list-item{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(0,0,0,0.04);transition:background .1s}
+.list-item:hover{background:rgba(0,0,0,0.02)}.list-item:last-child{border-bottom:none}
+.list-icon{width:34px;height:34px;border-radius:8px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:14px;flex-shrink:0}
+.list-title{font-size:14px;font-weight:600}.list-meta{font-size:13px;color:#64748B;margin-top:2px}
+
+.todo-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;transition:background .1s}
+.todo-item:hover{background:rgba(0,0,0,0.02)}.todo-item.done{opacity:0.45}
+.todo-check{width:18px;height:18px;border:2px solid var(--grey-300);border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.todo-item.done .todo-check{background:var(--accent);border-color:var(--accent);color:#fff;font-size:10px;font-weight:700}
+.todo-text{font-size:13px;flex:1}.todo-item.done .todo-text{text-decoration:line-through;color:var(--grey-500)}
+.todo-source{font-size:11px;color:var(--grey-500);margin-top:3px}
+
+.plan-box{background:var(--white);border:1px solid rgba(0,0,0,0.06);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:24px;line-height:1.7}
+.plan-box h1,.plan-box h2,.plan-box h3{color:var(--accent);margin:16px 0 8px}.plan-box h1{font-size:18px}.plan-box h2{font-size:16px}.plan-box h3{font-size:14px}
+.plan-box ul{padding-left:20px;margin:8px 0}.plan-box li{margin:4px 0;color:#64748B}
+.plan-box strong{color:var(--grey-950)}.plan-box code{font-family:var(--mono);background:var(--grey-100);padding:1px 5px;border-radius:4px;font-size:12px}
+.plan-box p{margin:6px 0;color:#64748B}
+
+.chat-page{display:flex;flex-direction:column;height:100%}
+.chat-messages{flex:1;overflow-y:auto;padding:20px 28px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{max-width:80%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
+.chat-msg.user{align-self:flex-end;background:#3B82F6;color:#fff;border-radius:16px 16px 4px 16px}
+.chat-msg.assistant{align-self:flex-start;background:var(--grey-100);color:var(--grey-950);border:1px solid rgba(0,0,0,0.06);border-radius:16px 16px 16px 4px}
+.chat-msg.system{align-self:center;font-size:12px;color:var(--grey-500);font-style:italic;background:none;padding:8px}
+.chat-input-area{padding:16px 28px;border-top:1px solid rgba(0,0,0,0.06);background:var(--white);display:flex;gap:8px}
+.chat-input{flex:1;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(0,0,0,0.12);background:var(--white);color:var(--grey-950);font-family:var(--font);font-size:14px;outline:none;resize:none;min-height:42px;max-height:120px}
+.chat-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(88,86,214,0.12)}
+.chat-input::placeholder{color:var(--grey-500)}
+
+.loading{display:flex;align-items:center;gap:8px;color:var(--grey-500);font-size:13px}
+.spinner{width:16px;height:16px;border:2px solid var(--grey-200);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:60px 20px;color:var(--grey-500)}
+.empty-state .e-icon{font-size:40px;margin-bottom:12px;opacity:0.4}
+.empty-state h3{color:var(--grey-600);font-size:16px;margin-bottom:6px}
+.sync-info{font-size:11px;color:var(--grey-500);font-family:var(--mono)}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--grey-300);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">OP</div>
+    <div class="login-title">Oracle Planner</div>
+    <div class="login-sub" id="login-sub">Select your profile to see your meetings and tasks</div>
+    <div class="login-machine" id="machine-id"></div>
+    <div class="team-grid" id="team-grid"></div>
+    <div id="locked-msg" style="display:none">
+      <p style="font-size:13px;color:var(--grey-600);margin-bottom:12px">This device is locked to a profile. To change, request approval.</p>
+      <button class="btn-request" id="btn-request-change">Request Profile Change</button>
+      <div id="change-status" style="margin-top:8px;font-size:12px;color:var(--success);display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">OP</div>
+      <div><div class="sb-name">Oracle Planner</div><div class="sb-org">Exergy Designs</div></div>
+    </div>
+    <div class="nav-section">Overview</div>
+    <button class="nav-btn active" data-page="dashboard"><span class="icon">&#9632;</span> Dashboard</button>
+    <button class="nav-btn" data-page="planner"><span class="icon">&#9776;</span> Daily Plan</button>
+    <button class="nav-btn" data-page="todo"><span class="icon">&#10003;</span> To-Do List</button>
+    <div class="nav-section">Tools</div>
+    <button class="nav-btn" data-page="chat"><span class="icon">&#9993;</span> AI Assistant</button>
+    <div class="sidebar-user">
+      <div class="sidebar-user-info">
+        <div class="u-avatar" id="u-avatar">?</div>
+        <div style="overflow:hidden"><div class="u-name" id="u-name"></div><div class="u-email" id="u-email"></div></div>
+      </div>
+      <button class="btn-signout" id="btn-signout">Switch User</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page active" id="page-dashboard">
+      <div class="page-header"><div><h2 id="greeting"></h2><p id="dash-date"></p></div>
+        <div class="header-actions"><span class="sync-info" id="sync-info"></span><button class="btn btn-secondary btn-sm" id="btn-sync">Sync Meetings</button><button class="btn btn-secondary btn-sm" id="btn-refresh">Refresh</button></div></div>
+      <div class="page-body"><div class="stat-grid" id="stat-cards"></div><div id="dash-meetings"></div></div>
+    </div>
+    <div class="page" id="page-planner">
+      <div class="page-header"><div><h2>Daily Plan</h2><p>AI-generated from your meetings</p></div><div class="header-actions"><button class="btn btn-primary" id="btn-gen-plan">Generate Plan</button></div></div>
+      <div class="page-body"><div class="plan-box" id="plan-content"><div class="empty-state"><div class="e-icon">&#128203;</div><h3>No plan yet</h3><p>Click "Generate Plan" to create your AI daily schedule.</p></div></div></div>
+    </div>
+    <div class="page" id="page-todo">
+      <div class="page-header"><div><h2>To-Do List</h2><p id="todo-count"></p></div></div>
+      <div class="page-body"><div class="card"><div class="card-body flush" id="todo-list"></div></div></div>
+    </div>
+    <div class="page" id="page-chat">
+      <div class="chat-page">
+        <div class="page-header"><div><h2>AI Assistant</h2><p>Ask about your projects, meetings, or tasks</p></div></div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+          <textarea class="chat-input" id="chat-input" placeholder="Ask anything..." rows="1"></textarea>
+          <button class="btn btn-primary" id="btn-chat-send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentUser=null, dashData=null, chatMessages=[], chatStreaming=false, machineId=null;
+
+function el(tag,attrs,children){
+  const n=document.createElement(tag);
+  if(attrs)for(const[k,v]of Object.entries(attrs)){
+    if(k==='className')n.className=v;else if(k==='onclick')n.addEventListener('click',v);
+    else if(k==='style'&&typeof v==='object')Object.assign(n.style,v);else n.setAttribute(k,v);}
+  if(typeof children==='string')n.textContent=children;
+  else if(Array.isArray(children))children.forEach(c=>{if(c)n.appendChild(c)});
+  else if(children instanceof Node)n.appendChild(children);
+  return n;
+}
+function clear(n){while(n.firstChild)n.removeChild(n.firstChild)}
+function initials(name){return(name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+async function post(url,body){const r=await fetch('/api/'+url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()}
+
+function renderMd(md,c){clear(c);if(!md)return;let cur=null;for(const line of md.split('\n')){const t=line.trim();if(!t){cur=null;continue}
+  if(t.startsWith('### ')){cur=null;c.appendChild(el('h3',null,t.slice(4)))}
+  else if(t.startsWith('## ')){cur=null;c.appendChild(el('h2',null,t.slice(3)))}
+  else if(t.startsWith('# ')){cur=null;c.appendChild(el('h1',null,t.slice(2)))}
+  else if(t.startsWith('- ')||t.match(/^\d+\.\s/)){if(!cur){cur=el('ul');c.appendChild(cur)}const li=el('li');inl(t.replace(/^[-\d.]+\s/,''),li);cur.appendChild(li)}
+  else{cur=null;const p=el('p');inl(t,p);c.appendChild(p)}}}
+function inl(text,p){for(const part of text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[URGENT\]|\[TODAY\]|\[THIS WEEK\])/g)){if(!part)continue;
+  if(part.startsWith('**')&&part.endsWith('**'))p.appendChild(el('strong',null,part.slice(2,-2)));
+  else if(part.startsWith('`')&&part.endsWith('`')){const c=el('code');c.textContent=part.slice(1,-1);p.appendChild(c)}
+  else if(part==='[URGENT]')p.appendChild(el('span',{className:'badge badge-danger'},'URGENT'));
+  else if(part==='[TODAY]')p.appendChild(el('span',{className:'badge badge-warning'},'TODAY'));
+  else if(part==='[THIS WEEK]')p.appendChild(el('span',{className:'badge badge-info'},'THIS WEEK'));
+  else p.appendChild(document.createTextNode(part))}}
+
+// Browser machine ID
+async function getMachineId(){
+  if(machineId)return machineId;
+  const raw=navigator.userAgent+'|'+screen.width+'x'+screen.height+'|'+Intl.DateTimeFormat().resolvedOptions().timeZone+'|'+navigator.language;
+  const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
+  machineId=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('').substring(0,16);
+  return machineId;
+}
+
+// Auth
+async function boot(){
+  const mid=await getMachineId();
+  document.getElementById('machine-id').textContent='Device: '+mid;
+  const check=await post('auth-check',{machineId:mid});
+  if(check.registered&&check.locked&&!check.changePending){
+    currentUser={name:check.name,email:check.email,role:check.role};showApp();return;
+  }
+  if(check.changePending){
+    document.getElementById('team-grid').style.display='none';
+    document.getElementById('locked-msg').style.display='block';
+    document.getElementById('login-sub').textContent='Change pending for: '+check.name;return;
+  }
+  const team=await fetch('/api/auth-team').then(r=>r.json());
+  const grid=document.getElementById('team-grid');clear(grid);
+  for(const m of team){
+    grid.appendChild(el('button',{className:'team-btn',onclick:()=>selectUser(m)},[
+      el('div',{className:'avatar'},initials(m.name)),
+      el('div',{className:'info'},[el('div',{className:'name'},m.name),el('div',{className:'role'},m.role)])]));
+  }
+}
+async function selectUser(member){
+  try{
+    const mid=await getMachineId();
+    currentUser=await post('auth-register',{machineId:mid,name:member.name,email:member.email,role:member.role});
+    showApp();
+  }catch(e){document.getElementById('login-sub').textContent='Error: device may already be registered.'}
+}
+document.getElementById('btn-signout').addEventListener('click',()=>{
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('team-grid').style.display='none';
+  document.getElementById('locked-msg').style.display='block';
+  document.getElementById('login-sub').textContent='Locked to: '+currentUser.name;
+});
+document.getElementById('btn-request-change').addEventListener('click',async()=>{
+  const mid=await getMachineId();
+  const r=await post('auth-request-change',{machineId:mid,reason:'User requested switch'});
+  const s=document.getElementById('change-status');s.style.display='block';
+  s.textContent=r.success?'Request submitted. Contact admin to approve.':'Failed';
+});
+
+function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('u-name').textContent=currentUser.name;
+  document.getElementById('u-email').textContent=currentUser.email;
+  document.getElementById('u-avatar').textContent=initials(currentUser.name);
+  const h=new Date().getHours();
+  document.getElementById('greeting').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+currentUser.name.split(' ')[0];
+  document.getElementById('dash-date').textContent=new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  chatMsgsEl.appendChild(el('div',{className:'chat-msg system'},'Hi '+currentUser.name.split(' ')[0]+'! Ask about your projects, meetings, or tasks.'));
+  loadDash();
+}
+
+// Nav
+document.querySelectorAll('.nav-btn').forEach(b=>{b.addEventListener('click',()=>{
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');document.getElementById('page-'+b.dataset.page).classList.add('active');
+})});
+
+// Dashboard
+async function loadDash(){
+  try{
+    dashData=await post('load-dashboard',{userEmail:currentUser.email,userName:currentUser.name});
+    renderDash(dashData);renderTodo(dashData);
+    const ls=dashData.syncMeta?.lastFireflySync?.timestamp;
+    if(ls){const ago=Math.round((Date.now()-new Date(ls).getTime())/60000);
+      document.getElementById('sync-info').textContent=(dashData.totalMeetingsStored||0)+' total \u00B7 '+dashData.meetings.length+' yours \u00B7 synced '+(ago<2?'now':ago+'m ago');}
+  }catch(e){console.error(e)}
+}
+function renderDash(data){
+  const cards=document.getElementById('stat-cards');clear(cards);
+  [{v:data.meetings?.length||0,l:'Your Meetings',i:'\u260E'},{v:data.actionItems?.length||0,l:'Your Tasks',i:'\u2713'},{v:data.totalMeetingsStored||0,l:'Total Stored',i:'\u25A0'}].forEach(s=>{
+    cards.appendChild(el('div',{className:'stat-card'},[el('div',{className:'ic'},s.i),el('div',{className:'val'},String(s.v)),el('div',{className:'lbl'},s.l)]));
+  });
+  const me=document.getElementById('dash-meetings');clear(me);
+  if(data.meetings?.length){
+    me.appendChild(el('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}},[
+      el('h3',{style:{fontSize:'14px',fontWeight:'600'}},'Your Meetings'),el('span',{className:'badge-count'},String(data.meetings.length))]));
+    const cd=el('div',{className:'card'});const bd=el('div',{className:'card-body flush'});
+    for(const m of data.meetings.slice(0,12)){
+      const d=m.date?new Date(m.date):null;
+      bd.appendChild(el('div',{className:'list-item'},[el('div',{className:'list-icon'},'\u260E'),
+        el('div',{style:{flex:'1',overflow:'hidden'}},[el('div',{className:'list-title'},m.title),
+          el('div',{className:'list-meta'},(d?d.toLocaleDateString('en-ZA',{month:'short',day:'numeric'}):'')+' \u00B7 '+(m.participants||[]).join(', '))]),
+        el('span',{className:'badge badge-neutral'},(m.duration||0)+'m')]));
+    }
+    cd.appendChild(bd);me.appendChild(cd);
+  }
+}
+
+// Todo
+function renderTodo(data){
+  const c=document.getElementById('todo-list');clear(c);
+  const items=data.actionItems||[];
+  document.getElementById('todo-count').textContent=items.length+' tasks for '+currentUser.name;
+  if(!items.length){c.appendChild(el('div',{className:'empty-state'},[el('div',{className:'e-icon'},'\u2611'),el('h3',null,'No tasks assigned'),el('p',null,'Action items from your meetings will appear here.')]));return}
+  for(const item of items.slice(0,60)){
+    const days=item.date?Math.floor((Date.now()-new Date(item.date).getTime())/86400000):99;
+    let bc='badge-info',bl='THIS WEEK';
+    if(days<=1){bc='badge-warning';bl='TODAY'}else if(days>3){bc='badge-danger';bl='OVERDUE'}
+    c.appendChild(el('div',{className:'todo-item'+(item.completed?' done':''),onclick:async function(){
+      this.classList.toggle('done');const ch=this.querySelector('.todo-check');ch.textContent=this.classList.contains('done')?'\u2713':'';
+      await post('toggle-action-item',{id:item.id,completed:this.classList.contains('done')});
+    }},[
+      el('div',{className:'todo-check'},item.completed?'\u2713':''),
+      el('div',{style:{flex:'1'}},[el('div',{className:'todo-text'},item.task),el('div',{className:'todo-source'},'From: '+item.from+' \u00B7 '+(item.date?new Date(item.date).toLocaleDateString('en-ZA'):''))]),
+      el('span',{className:'badge '+bc},bl)]));
+  }
+}
+
+// Plan
+document.getElementById('btn-gen-plan').addEventListener('click',async()=>{
+  const b=document.getElementById('btn-gen-plan'),box=document.getElementById('plan-content');
+  b.disabled=true;b.textContent='Generating...';clear(box);
+  box.appendChild(el('div',{className:'loading'},[el('div',{className:'spinner'}),document.createTextNode(' Analyzing your meetings...')]));
+  try{const r=await post('generate-plan',{userName:currentUser.name,userEmail:currentUser.email});renderMd(r.plan,box)}
+  catch(e){clear(box);box.appendChild(el('p',{style:{color:'var(--danger)'}},'Error: '+(e.message||e)))}
+  b.disabled=false;b.textContent='Generate Plan';
+});
+
+document.getElementById('btn-refresh').addEventListener('click',async()=>{const b=document.getElementById('btn-refresh');b.disabled=true;b.textContent='Loading...';await loadDash();b.disabled=false;b.textContent='Refresh'});
+document.getElementById('btn-sync').addEventListener('click',async()=>{const b=document.getElementById('btn-sync');b.disabled=true;b.textContent='Syncing...';
+  try{await post('sync-fireflies',{daysBack:7});await loadDash()}catch(e){console.error(e)}b.disabled=false;b.textContent='Sync Meetings'});
+
+// Chat (streaming via fetch)
+const chatInput=document.getElementById('chat-input'),chatMsgsEl=document.getElementById('chat-messages');
+chatInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
+chatInput.addEventListener('input',()=>{chatInput.style.height='auto';chatInput.style.height=Math.min(chatInput.scrollHeight,120)+'px'});
+document.getElementById('btn-chat-send').addEventListener('click',sendChat);
+
+async function sendChat(){
+  const text=chatInput.value.trim();if(!text||chatStreaming)return;
+  chatInput.value='';chatInput.style.height='auto';
+  chatMessages.push({role:'user',content:text});
+  chatMsgsEl.appendChild(el('div',{className:'chat-msg user'},text));
+  chatStreaming=true;
+  const bubble=el('div',{className:'chat-msg assistant'});
+  bubble.appendChild(el('div',{className:'loading'},[el('div',{className:'spinner'})]));
+  chatMsgsEl.appendChild(bubble);chatMsgsEl.scrollTop=chatMsgsEl.scrollHeight;
+
+  try{
+    const resp=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatMessages,userName:currentUser.name,userEmail:currentUser.email})});
+    const reader=resp.body.getReader();const decoder=new TextDecoder();
+    const tokens=[];let cleared=false;
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      if(!cleared){clear(bubble);cleared=true}
+      tokens.push(decoder.decode(value,{stream:true}));
+      renderMd(tokens.join(''),bubble);chatMsgsEl.scrollTop=chatMsgsEl.scrollHeight;
+    }
+    chatMessages.push({role:'assistant',content:tokens.join('')});
+  }catch(e){clear(bubble);bubble.appendChild(el('span',{style:{color:'var(--danger)'}},'Error: '+e.message))}
+  chatStreaming=false;
+}
+
+boot();
+</script>
+</body>
+</html>

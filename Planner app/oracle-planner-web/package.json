@@ -1,0 +1,10 @@
+{
+  "name": "oracle-planner-web",
+  "version": "1.0.0",
+  "description": "Oracle Planner — Exergy Designs team planner with AI chat",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "@netlify/functions": "^2.8.0"
+  }
+}
